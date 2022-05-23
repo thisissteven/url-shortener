@@ -11,7 +11,9 @@ type FormValues = {
 };
 
 const Home: NextPage = () => {
-	const [generatedUrl, setGeneratedUrl] = useState<String | null>(null);
+	const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
+	const [loading, setLoading] = useState<boolean>(false);
+
 	const shortenUrl: SubmitHandler<FormValues> = async (data) => {
 		const config: AxiosRequestConfig = {
 			url: "/api/shortenUrl",
@@ -24,50 +26,81 @@ const Home: NextPage = () => {
 			method: "POST",
 		};
 
+		setLoading(true);
 		await axios(config)
 			.then((res) => {
 				setGeneratedUrl(res.data);
+				setLoading(false);
+				enqueueSnackbar("Url shortened successfully!", { variant: "success" });
+				reset();
 			})
 			.catch((err) => {
 				const errorMessage: String = err.response.data.errorMessage;
+				setLoading(false);
+				setGeneratedUrl(null);
 				enqueueSnackbar(errorMessage, { variant: "error" });
 			});
 	};
 
-	const { register, handleSubmit } = useForm<FormValues>();
+	const { register, handleSubmit, reset } = useForm<FormValues>();
 	const { enqueueSnackbar } = useSnackbar();
+
+	const copyUrl = async () => {
+		await navigator.clipboard.writeText(`http://localhost:3000/${generatedUrl}`);
+		enqueueSnackbar("Url copied successfully!", { variant: "success" });
+	};
 
 	return (
 		<div className="h-screen">
 			<div className="flex justify-center items-center h-full">
-				<form onSubmit={handleSubmit(shortenUrl)} className="space-y-4 flex flex-col">
-					<div className="flex-1">
-						<input
-							{...register("longUrl")}
-							type="text"
-							placeholder="Enter your long url"
-							className="px-2 py-1 bg-gray-100 focus:bg-white outline-indigo-700 w-full rounded-sm"
-						/>
-					</div>
-					<div className="space-x-2">
-						<label htmlFor="short-url">localhost:3000/</label>
-						<input
-							{...register("shortUrl")}
-							type="text"
-							id="short-url"
-							placeholder="Enter your short url"
-							className="px-2 py-1 bg-gray-100 focus:bg-white outline-indigo-700 rounded-sm"
-						/>
-					</div>
-					<div className="flex space-x-2">
-						<button type="button" className="flex-1 bg-indigo-300 flex items-center px-2">
-							<h1 className="flex-1 text-gray-800 text-left w-[152.75px]">http://localhost:3000/{generatedUrl}</h1>
+				<div className="flex flex-col space-y-4">
+					<h1 className="font-bold text-xl text-center mb-8">Url Shortener</h1>
+					<form onSubmit={handleSubmit(shortenUrl)} className="space-y-4 flex flex-col">
+						<div className="flex-1">
+							<input
+								autoComplete="off"
+								{...register("longUrl")}
+								type="text"
+								placeholder="Enter your long url"
+								className="px-2 py-1 bg-gray-100 focus:bg-white outline-indigo-700 w-full rounded-sm"
+							/>
+						</div>
+						<div className="space-x-2">
+							<label htmlFor="short-url">localhost:3000/</label>
+							<input
+								autoComplete="off"
+								{...register("shortUrl")}
+								type="text"
+								id="short-url"
+								placeholder="Enter your short url"
+								className="px-2 py-1 bg-gray-100 focus:bg-white outline-indigo-700 rounded-sm"
+							/>
+						</div>
+						<button
+							type="submit"
+							className="flex place-self-end px-4 py-2 bg-indigo-500 hover:opacity-90 text-white rounded-md"
+						>
+							Shorten Url!
+						</button>
+					</form>
+					<div className={generatedUrl ? "opacity-100" : "opacity-0 pointer-events-none"}>
+						<button
+							type="button"
+							onClick={() => copyUrl()}
+							title="copy link"
+							className={`bg-green-600 mt-2 px-4 py-2 flex space-x-4 rounded-md w-full ${
+								loading && "bg-gray-200 animate-pulse h-10"
+							}`}
+						>
+							<h1 className={`${loading && "hidden"} flex-1 text-gray-100 text-left`}>
+								http://localhost:3000/{generatedUrl}
+							</h1>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
-								className="h-6 w-6"
+								className={`h-6 w-6 ${loading && "hidden"}`}
 								fill="none"
 								viewBox="0 0 24 24"
-								stroke="currentColor"
+								stroke="white"
 								strokeWidth="2"
 							>
 								<path
@@ -77,11 +110,8 @@ const Home: NextPage = () => {
 								/>
 							</svg>
 						</button>
-						<button type="submit" className="px-4 py-2 bg-indigo-500 hover:opacity-90 text-white rounded-md">
-							Shorten Url!
-						</button>
 					</div>
-				</form>
+				</div>
 			</div>
 		</div>
 	);
