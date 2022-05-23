@@ -6,15 +6,32 @@ import { useSnackbar } from "notistack";
 import { useState } from "react";
 
 type FormValues = {
-	longUrl: String;
-	shortUrl: String;
+	longUrl: string;
+	shortUrl: string;
 };
 
 const Home: NextPage = () => {
 	const [generatedUrl, setGeneratedUrl] = useState<string | null>(null);
 	const [loading, setLoading] = useState<boolean>(false);
 
+	const isValidUrl = (longUrl: string) => {
+		let url;
+
+		try {
+			url = new URL(longUrl);
+		} catch (_) {
+			return false;
+		}
+
+		return url.protocol === "http:" || url.protocol === "https:";
+	};
+
 	const shortenUrl: SubmitHandler<FormValues> = async (data) => {
+		if (!isValidUrl(data.longUrl)) {
+			enqueueSnackbar("URL is invalid. Please enter valid URL.", { variant: "error" });
+			return;
+		}
+
 		const config: AxiosRequestConfig = {
 			url: "/api/shortenUrl",
 			headers: {
@@ -31,7 +48,7 @@ const Home: NextPage = () => {
 			.then((res) => {
 				setGeneratedUrl(res.data);
 				setLoading(false);
-				enqueueSnackbar("Url shortened successfully!", { variant: "success" });
+				enqueueSnackbar("URL shortened successfully!", { variant: "success" });
 				reset();
 			})
 			.catch((err) => {
@@ -47,7 +64,7 @@ const Home: NextPage = () => {
 
 	const copyUrl = async () => {
 		await navigator.clipboard.writeText(`http://localhost:3000/${generatedUrl}`);
-		enqueueSnackbar("Url copied successfully!", { variant: "success" });
+		enqueueSnackbar("URL copied successfully!", { variant: "success" });
 	};
 
 	return (
@@ -61,7 +78,7 @@ const Home: NextPage = () => {
 								autoComplete="off"
 								{...register("longUrl")}
 								type="text"
-								placeholder="Enter your long url"
+								placeholder="Enter your long URL"
 								className="px-2 py-1 bg-gray-100 focus:bg-white outline-indigo-700 w-full rounded-sm"
 							/>
 						</div>
@@ -72,7 +89,7 @@ const Home: NextPage = () => {
 								{...register("shortUrl")}
 								type="text"
 								id="short-url"
-								placeholder="Enter your short url"
+								placeholder="Enter your short URL"
 								className="px-2 py-1 bg-gray-100 focus:bg-white outline-indigo-700 rounded-sm"
 							/>
 						</div>
@@ -80,7 +97,7 @@ const Home: NextPage = () => {
 							type="submit"
 							className="flex place-self-end px-4 py-2 bg-indigo-500 hover:opacity-90 text-white rounded-md"
 						>
-							Shorten Url!
+							Shorten URL!
 						</button>
 					</form>
 					<div className={generatedUrl ? "opacity-100" : "opacity-0 pointer-events-none"}>
