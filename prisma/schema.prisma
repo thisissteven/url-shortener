@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Link {
-  id   String @id @default(cuid())
-  url  String
-  name String @unique
+  id       String @id @default(cuid())
+  longUrl  String
+  shortUrl String @unique
 }
