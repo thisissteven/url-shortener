@@ -69,7 +69,7 @@ const Home: NextPage = () => {
 
 	return (
 		<div className="h-screen">
-			<div className="flex justify-center items-center h-full">
+			<div className="flex justify-center items-center h-full mx-4">
 				<div className="flex flex-col space-y-4">
 					<h1 className="font-bold text-xl text-center mb-8">Url Shortener</h1>
 					<form onSubmit={handleSubmit(shortenUrl)} className="space-y-4 flex flex-col">
@@ -82,7 +82,7 @@ const Home: NextPage = () => {
 								className="px-2 py-1 bg-gray-100 focus:bg-white outline-indigo-700 w-full rounded-sm"
 							/>
 						</div>
-						<div className="space-x-2">
+						<div className="space-x-1 sm:space-x-2">
 							<label htmlFor="short-url">{process.env.NEXT_PUBLIC_SITE_URL}</label>
 							<input
 								autoComplete="off"
@@ -90,12 +90,12 @@ const Home: NextPage = () => {
 								type="text"
 								id="short-url"
 								placeholder="Enter your short URL"
-								className="px-2 py-1 bg-gray-100 focus:bg-white outline-indigo-700 rounded-sm"
+								className="w-[170px] sm:w-auto px-2 py-1 bg-gray-100 focus:bg-white outline-indigo-700 rounded-sm"
 							/>
 						</div>
 						<button
 							type="submit"
-							className="flex place-self-end px-4 py-2 bg-indigo-500 hover:opacity-90 text-white rounded-md"
+							className="flex place-self-end px-3 py-1.5 bg-indigo-500 hover:opacity-90 text-white rounded-md"
 						>
 							Shorten URL!
 						</button>
