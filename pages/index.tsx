@@ -100,7 +100,7 @@ const Home: NextPage = () => {
 							Shorten URL!
 						</button>
 					</form>
-					<div className={generatedUrl ? "opacity-100" : "opacity-0 pointer-events-none"}>
+					<div className={loading || generatedUrl ? "opacity-100" : "opacity-0 pointer-events-none"}>
 						<button
 							type="button"
 							onClick={() => copyUrl()}
