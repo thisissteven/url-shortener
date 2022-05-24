@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
+import { resolve } from "path";
 import prisma from "../../lib/prisma";
 
 interface UrlData {
@@ -18,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 		});
 
 		if (findUrl) {
-			return res.status(500).json({ errorMessage: `http://localhost:3000/${shortUrl} is already taken.` });
+			return res.status(500).json({ errorMessage: `${process.env.NEXT_PUBLIC_SITE_URL}${shortUrl} is already taken.` });
 		}
 
 		await prisma.link.create({
@@ -28,7 +29,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 			},
 		});
 	} catch (err) {
-		return res.status(500);
+		res.status(500);
+		resolve();
 	}
 
 	return res.status(200).json(shortUrl);

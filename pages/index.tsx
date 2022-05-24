@@ -63,7 +63,7 @@ const Home: NextPage = () => {
 	const { enqueueSnackbar } = useSnackbar();
 
 	const copyUrl = async () => {
-		await navigator.clipboard.writeText(`https://url-shortener-beta-sooty.vercel.app/${generatedUrl}`);
+		await navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_SITE_URL}${generatedUrl}`);
 		enqueueSnackbar("URL copied successfully!", { variant: "success" });
 	};
 
@@ -83,7 +83,7 @@ const Home: NextPage = () => {
 							/>
 						</div>
 						<div className="space-x-2">
-							<label htmlFor="short-url">https://url-shortener-beta-sooty.vercel.app/</label>
+							<label htmlFor="short-url">{process.env.NEXT_PUBLIC_SITE_URL}</label>
 							<input
 								autoComplete="off"
 								{...register("shortUrl")}
@@ -110,7 +110,8 @@ const Home: NextPage = () => {
 							}`}
 						>
 							<h1 className={`${loading && "hidden"} flex-1 text-gray-100 text-left`}>
-								https://url-shortener-beta-sooty.vercel.app/{generatedUrl}
+								{process.env.NEXT_PUBLIC_SITE_URL}
+								{generatedUrl}
 							</h1>
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
