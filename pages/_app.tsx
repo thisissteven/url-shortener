@@ -9,6 +9,7 @@ function MyApp({ Component, pageProps }: AppProps) {
 			<Head>
 				<title>Url Shortener</title>
 				<meta name="viewport" content="initial-scale=1.0, width=device-width" />
+				<meta name="description" content="stevenn.tech is a platform where you can shorten any link for free."></meta>
 			</Head>
 			<SnackbarProvider
 				anchorOrigin={{
